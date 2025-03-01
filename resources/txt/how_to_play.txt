@@ -1,0 +1,4 @@
+1. Avoid enemy's attacks (blue donuts).
+2. Collect all blue entities.
+3. Avoid purple entities.
+4. Collect energy and use it whenever you need (press shift).
