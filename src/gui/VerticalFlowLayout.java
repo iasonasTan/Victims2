@@ -5,9 +5,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager2;
 import java.util.ArrayList;
+import java.util.List;
 
 public final class VerticalFlowLayout implements LayoutManager2 {
-    private ArrayList<Component> components = new ArrayList<>();
+    private List<Component> components = new ArrayList<>();
     public int vGap = 0; // vertical
 
     public VerticalFlowLayout () {

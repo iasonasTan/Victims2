@@ -26,19 +26,11 @@ public class Enemy extends MovableEntity {
 		projectileM.update();
 		super.update();
 		
-		// follow player
-		int diffX = x-context.getPlayer().x;
-		int diffY = y-context.getPlayer().y;
-		double distance = Math.sqrt(diffX*diffX + diffY*diffY);
-		double directionX = 0;
-		double directionY = 0;
-		if (distance > 0) {
-			directionX = diffX/distance;
-			directionY = diffY/distance;
-		}
+		Player player = context.getPlayer();
+		PointDb direction = MovableEntity.getDirection(getPoint(), player.getPoint());
 		
-		int x = (int)(speed*directionX);
-		int y = (int)(speed*directionY);
+		int x = (int)(speed*direction.x());
+		int y = (int)(speed*direction.y());
 		
 		move(new Point(-x, -y));
 		
@@ -88,7 +80,7 @@ public class Enemy extends MovableEntity {
 
 	@Override
 	public void collect() {
-		dash(2);
+		dash(2, 4);
 	}
 
 }

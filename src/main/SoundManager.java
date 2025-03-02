@@ -1,8 +1,14 @@
 package main;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
 
 public final class SoundManager {
 	private ClipHandler music;
@@ -27,16 +33,27 @@ public final class SoundManager {
 				if (loop)
 					clip.loop(Clip.LOOP_CONTINUOUSLY);
 				clip.start();
+				
+				clip.addLineListener(event -> {
+	                if (event.getType() == LineEvent.Type.STOP) {
+	                    close();
+	                }
+	            });
 			} catch (Exception e) {
-				System.out.println("Can't play sound, i'm sory, maybe "+
-						"your pc needs a hug idk");
+				e.printStackTrace();
 			}
 		}
-
+		public void close () {
+			clip.close();
+			try {
+				ais.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
 		public void stop() {
 			clip.stop();
 		}
-
 		public void resume() {
 			clip.start();
 		}

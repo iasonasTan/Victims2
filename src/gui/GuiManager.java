@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.util.Properties;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import main.DataStorage;
@@ -57,6 +59,8 @@ public class GuiManager {
 	private class SettingsPanel extends JPanel {
 		private final JCheckBox newGraphicsCheck = new JCheckBox("new graphics");
 		private final JCheckBox musicCheck = new JCheckBox("Music");
+		private final JComboBox<String> movementMethodBox = new JComboBox<>(
+				new String[]{"mouse-based", "key-based"});
 		private final Button saveAndExitBtn = new Button("Save and Exit", true, null);
 		
 		private PanelWithProperties pwp;
@@ -77,8 +81,9 @@ public class GuiManager {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Properties p = new Properties();
-					p.put("newGraphics", ""+newGraphicsCheck.isSelected());
-					p.put("music", ""+musicCheck.isSelected());
+					p.setProperty("newGraphics", ""+newGraphicsCheck.isSelected());
+					p.setProperty("music", ""+musicCheck.isSelected());
+					p.setProperty("movementMethod", (String)movementMethodBox.getSelectedItem());
 					
 					DataStorage.SettingsStorage.writePropertiesToDisk(p);
 					pwp.updateProperties(p);
@@ -89,14 +94,16 @@ public class GuiManager {
 			
 			add(newGraphicsCheck);
 			add(musicCheck);
+			add(movementMethodBox);
 			
 			add(saveAndExitBtn);
 		}
 		
-		private void loadSavedSettings () {
+		private void loadSavedSettings () { // TODO replace all Properties.get() and Properties.put()
 			Properties savedProperties = DataStorage.SettingsStorage.loadPropertiesFromDisk();
-			newGraphicsCheck.setSelected(savedProperties.get("newGraphics").equals("true"));
-			musicCheck.setSelected(savedProperties.get("music").equals("true"));
+			newGraphicsCheck.setSelected(savedProperties.getProperty("newGraphics").equals("true"));
+			musicCheck.setSelected(savedProperties.getProperty("music").equals("true"));
+			movementMethodBox.setSelectedItem(savedProperties.getProperty("movementMethod"));
 		}
 		
 		@Override

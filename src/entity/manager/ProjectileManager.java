@@ -4,7 +4,7 @@ import entity.Entity;
 import entity.Projectile;
 import main.GamePanel;
 
-public class ProjectileManager extends EntityManager<Projectile> /* implements MouseListener */ {
+public class ProjectileManager extends EntityManager<Projectile> {
 	private Entity parent;
 
 	public ProjectileManager(GamePanel c, Entity parent) {

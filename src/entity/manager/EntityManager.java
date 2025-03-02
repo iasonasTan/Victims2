@@ -1,18 +1,17 @@
 package entity.manager;
 
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import entity.Entity;
 import main.GamePanel;
-import main.GamePanel;
 
 public abstract class EntityManager <E extends Entity & Removable> {
-	private ArrayList<E> entities = new ArrayList<>();
+	private List<E> entities = new ArrayList<>();
 	protected GamePanel context;
 	
 	public EntityManager (GamePanel c) {
@@ -33,6 +32,13 @@ public abstract class EntityManager <E extends Entity & Removable> {
 				iter.remove();
 			}
 		}
+		
+		iter = entities.iterator();
+		while (iter.hasNext()) {
+			if (!context.isInFrame(iter.next(), 100)) {
+				iter.remove();
+			}
+		}
 	}
 	
 	public void draw (Graphics g) {
@@ -45,7 +51,7 @@ public abstract class EntityManager <E extends Entity & Removable> {
 		entities.forEach(consumer);
 	}
 	
-	public ArrayList<E> getList () {
+	public List<E> getList () {
 		return entities;
 	}
 	

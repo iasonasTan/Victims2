@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import entity.Enemy;
@@ -20,7 +19,6 @@ import entity.Player;
 import entity.manager.EnergyManager;
 import entity.manager.VictimManager;
 import gui.GuiManager;
-import gui.TextView;
 
 public final class GamePanel extends JPanel implements PanelWithProperties {
 	
@@ -99,7 +97,7 @@ public final class GamePanel extends JPanel implements PanelWithProperties {
 	public void initGameEntities () {
 		gameOverCounter = DEFAULT_GAME_OVER_COUNTER;
 		victimM = new VictimManager(this);
-		player = new Player(this);
+		player = new Player(this, (String)properties.get("movementMethod"));
 		energyM = new EnergyManager(this);
 		enemy = new Enemy(this);
 	}
@@ -110,9 +108,8 @@ public final class GamePanel extends JPanel implements PanelWithProperties {
 		startGame();		
 	}
 	
-	public boolean isInFrame (Entity e) { // use delay
+	public boolean isInFrame (Entity e, final int GAP) { // use delay
 		Rectangle entityRect = new Rectangle(e.getRect());
-		final int GAP = 10;
 		entityRect.x -= GAP;
 		entityRect.y -= GAP;
 		entityRect.width+=GAP*2;
@@ -198,6 +195,7 @@ public final class GamePanel extends JPanel implements PanelWithProperties {
 		player.reloadResources();
 		energyM.reloadResources();
 		enemy.reloadResources();
+		player.setMovementMethod(p.getProperty("movementMethod"));
 		
 		if (!musicOn) {
 			soundM.stopMusic();

@@ -24,6 +24,19 @@ public abstract class MovableEntity extends Entity implements Collector {
 		speed = defaultSpeed;
 	}
 	
+	public static PointDb getDirection (Point start, Point target) {
+		int diffX = start.x-target.x;
+		int diffY = start.y-target.y;
+		double distance = Math.sqrt(diffX*diffX + diffY*diffY);
+		double directionX = 0;
+		double directionY = 0;
+		if (distance > 0) {
+			directionX = diffX/distance;
+			directionY = diffY/distance;
+		}
+		return new PointDb(directionX, directionY);
+	}
+	
 	public void reloadResources() {
 		String resource = context.isNewGraphics() ? "dash_new.png" : "dash.png";
 		try {
@@ -78,8 +91,8 @@ public abstract class MovableEntity extends Entity implements Collector {
 	
 	@Override abstract public void setDefaultValues();
 	
-	public void dash (int secs) {
-		speed+=3;
+	public void dash (int secs, int diff) {
+		speed+=diff;
 		onDash = true;
 		
 		Runnable reset = () -> {

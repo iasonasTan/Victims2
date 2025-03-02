@@ -7,7 +7,7 @@ import main.GamePanel;
 
 public abstract class AbstractVictim extends MovableEntity implements Removable {
 	private Runnable moveCommand;
-	protected boolean removable = false;
+	protected boolean killed = false;
 
 	protected AbstractVictim(GamePanel c, int defaultSpeed) {
 		super(c, defaultSpeed);
@@ -18,7 +18,7 @@ public abstract class AbstractVictim extends MovableEntity implements Removable 
 	
 	@Override
 	public boolean remove () {
-		return removable;
+		return killed;
 	}
 
 	@Override
@@ -26,13 +26,7 @@ public abstract class AbstractVictim extends MovableEntity implements Removable 
 		moveCommand.run();
 		updateRect();
 		
-		Rectangle smallerRect = new Rectangle(getRect());
-		final int GAP = 10;
-		smallerRect.x += GAP;
-		smallerRect.y += GAP;
-		smallerRect.width-=GAP*2;
-		smallerRect.height-=GAP*2;
-		if (!smallerRect.intersects(context.getRect())) {
+		if (!context.isInFrame(this, 0)) {
 			burn();
 		}
 	}
@@ -65,7 +59,7 @@ public abstract class AbstractVictim extends MovableEntity implements Removable 
 
 	@Override
 	public void collect() { // when hits energy
-		dash(2);	
+		dash(2, 3);	
 	}
 
 }

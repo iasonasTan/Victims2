@@ -20,7 +20,7 @@ public class FakeVictim extends AbstractVictim {
 	
 	@Override
 	public void burn () {
-		removable = true;
+		killed = true;
 	}
 	
 	@Override
@@ -34,7 +34,7 @@ public class FakeVictim extends AbstractVictim {
 	public void kill() {
 		context.getPlayer().decreaseScore();
 		context.getSoundManager().playFile("/sound/score_decreased.wav");
-		removable = true;
+		killed = true;
 	}
 
 }

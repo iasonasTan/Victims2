@@ -68,13 +68,13 @@ public class Projectile extends MovableEntity implements Removable {
 
 	@Override
 	public void collect() {
-		dash(2);
+		dash(2, 3);
 		
 	}
 
 	@Override
 	public boolean remove() {
-		return !context.isInFrame(this);
+		return !context.isInFrame(this, 0);
 	}
 
 }

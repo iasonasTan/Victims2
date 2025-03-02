@@ -79,6 +79,10 @@ public abstract class Entity {
 		return rect;
 	}
 	
+	public Point getPoint () {
+		return new Point(x, y);
+	}
+	
 	public Point getCenter () {
 		int cx = x+width/2;
 		int cy = y+height/2;

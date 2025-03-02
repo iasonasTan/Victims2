@@ -26,9 +26,11 @@ public final class Player extends MovableEntity {
 	private Image imageWin;
 	private Image[] collectingFrames;
 	private AbstractVictim collider;
+	private String movementMethod;
 
-	public Player(GamePanel c) {
+	public Player(GamePanel c, String mm) {
 		super(c, 8);
+		this.movementMethod = mm;
 		
 		BEST_SCORE = DataStorage.ScoreStorage.loadScoreFromDisk();
 		
@@ -36,6 +38,10 @@ public final class Player extends MovableEntity {
 		reloadResources();
 	}
 	
+	public void setMovementMethod(String movementMethod) {
+		this.movementMethod = movementMethod;
+	}
+
 	public void saveScore () {
 		if (score > BEST_SCORE) {
 			DataStorage.ScoreStorage.writeScoreToDisk(score);
@@ -60,16 +66,29 @@ public final class Player extends MovableEntity {
 		super.update();
 		
 		final KeyHandler keyH = context.getKeyHandler();
+		
+		
 		int stepsX = 0;
 		int stepsY = 0;
-		stepsX += keyH.left ? -speed : keyH.right ? speed : 0;
-		stepsY += keyH.up ? -speed : keyH.down ? speed : 0;
+
+		if (movementMethod.equals("key-based")) {
+			stepsX += keyH.left ? -speed : keyH.right ? speed : 0;
+			stepsY += keyH.up ? -speed : keyH.down ? speed : 0;
+		} else if (movementMethod.equals("mouse-based")) {
+			Point mousePossition = context.getMousePosition();
+			PointDb dire = MovableEntity.getDirection(getPoint(), mousePossition);
+			stepsX = -(int)(speed*dire.x());
+			stepsY = -(int)(speed*dire.y());
+		} else {
+			throw new IllegalArgumentException("unknown movement method "+movementMethod);
+		}
+		
 		move(new Point(stepsX, stepsY));
 		
 		updateRect();
 		
 		if (keyH.shift) {
-			dash(2);
+			dash(2, 3);
 			keyH.shift = false;
 		}
 		
@@ -121,11 +140,11 @@ public final class Player extends MovableEntity {
 	}
 	
 	@Override
-	public void dash (int time) {
+	public void dash (int time, int diff) {
 		if (dashCount <= 0)
 			return;
 		
-		super.dash(time);
+		super.dash(time, diff);
 		context.getSoundManager().playFile("/sound/dash_start.wav");
 		var ses = Executors.newSingleThreadScheduledExecutor();
 		ses.schedule(() -> {

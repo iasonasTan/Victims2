@@ -17,7 +17,7 @@ public class Victim extends AbstractVictim {
 	public void burn() {
 		context.getPlayer().decreaseScore();
 		context.getSoundManager().playFile("/sound/score_decreased.wav");
-		removable = true;
+		killed = true;
 	}
 	
 	@Override
@@ -31,7 +31,7 @@ public class Victim extends AbstractVictim {
 	public void kill() {
 		context.getPlayer().increaseScore();
 		context.getSoundManager().playFile("/sound/score_increased.wav");
-		removable = true;
+		killed = true;
 	}
 	
 
