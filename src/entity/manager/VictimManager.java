@@ -1,17 +1,28 @@
 package entity.manager;
 
+import entity.AbstractVictim;
+import entity.FakeVictim;
 import entity.Victim;
-import main.Context;
+import main.GamePanel;
 
-public final class VictimManager extends EntityManager<Victim> {
+public final class VictimManager extends EntityManager<AbstractVictim> {
 	private int counter = 0;
 	
-	public VictimManager(Context c) {
+	public VictimManager(GamePanel c) {
 		super(c);
 	}
 	
 	public void addVictim () {
-		addEntity(new Victim(context));
+		AbstractVictim victim;
+		int randInt = (int)(Math.random()*100);
+		
+		if (randInt < 40) {
+			victim = new Victim(context);
+		} else {
+			victim = new FakeVictim(context);
+		}
+		
+		addEntity(victim);
 	}
 	
 	@Override

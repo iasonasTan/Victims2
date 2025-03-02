@@ -1,19 +1,17 @@
 package entity;
 
 import java.awt.Graphics;
-import java.lang.reflect.Field;
-import java.util.Optional;
 
 import javax.swing.ImageIcon;
 
-import entity.manager.EntityManager;
-import main.Context;
+import entity.manager.Removable;
+import main.GamePanel;
 
-public class Energy extends Entity {
-	private Victim parent;
-	private boolean burnable = true;
+public final class Energy extends Entity implements Removable {
+	private AbstractVictim parent;
+	private boolean used = false;
 
-	public Energy(Context c, Victim parent) {
+	public Energy(GamePanel c, AbstractVictim parent) {
 		super(c);
 		this.x = parent.x;
 		this.y = parent.y;
@@ -31,10 +29,6 @@ public class Energy extends Entity {
 
 	@Override
 	public void update() {
-		if (!burnable) {
-			return;
-		}
-		
 		for (MovableEntity v: context.getVictimManager().getList())
 			collectIfCollides(v);
 		
@@ -45,7 +39,7 @@ public class Energy extends Entity {
 	
 	private void collectIfCollides (MovableEntity me) {
 		if (collides(me) && !me.equals(parent)) {
-			burn();
+			used = true;
 			me.collect();
 		}
 	}
@@ -55,15 +49,6 @@ public class Energy extends Entity {
 		// open/closed principle
 		g.drawImage(image, x, y, width, height, null);
 	}
-	
-	public boolean isBurnable () {
-		return burnable;
-	}
-	
-	public void burn () {
-		context.getEnergyManager().removeEntity(this);
-		burnable = false;
-	}
 
 	@Override
 	public void setDefaultValues() {
@@ -71,6 +56,11 @@ public class Energy extends Entity {
 		height = width;
 		
 		updateRect();
+	}
+
+	@Override
+	public boolean remove() {
+		return used;
 	}
 
 }

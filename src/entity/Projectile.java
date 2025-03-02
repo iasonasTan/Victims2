@@ -2,16 +2,16 @@ package entity;
 
 import java.awt.Point;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import main.Context;
+import entity.manager.Removable;
+import main.GamePanel;
 
-public class Projectile extends MovableEntity {
+public class Projectile extends MovableEntity implements Removable {
 	private double directionX = 0;
 	private double directionY = 0;
 
-	public Projectile(Context c, Point locationCenter, Point targetCenter) {
+	public Projectile(GamePanel c, Point locationCenter, Point targetCenter) {
 		super(c, 7);
 		
 		setDefaultValues();
@@ -70,6 +70,11 @@ public class Projectile extends MovableEntity {
 	public void collect() {
 		dash(2);
 		
+	}
+
+	@Override
+	public boolean remove() {
+		return !context.isInFrame(this);
 	}
 
 }

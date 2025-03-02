@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 import gui.GuiManager;
-import main.Context;
+import main.GamePanel;
 
 public abstract class MovableEntity extends Entity implements Collector {
 	protected int defaultSpeed, speed;
@@ -18,7 +18,7 @@ public abstract class MovableEntity extends Entity implements Collector {
 	protected Direction direction = Direction.DOWN;
 	protected BufferedImage dashImage;
 
-	public MovableEntity(Context c, int defaultSpeed) {
+	public MovableEntity(GamePanel c, int defaultSpeed) {
 		super(c);
 		this.defaultSpeed = defaultSpeed;
 		speed = defaultSpeed;

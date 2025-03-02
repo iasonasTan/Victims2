@@ -3,19 +3,19 @@ package entity.manager;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import entity.Entity;
-import main.Context;
+import main.GamePanel;
 import main.GamePanel;
 
-public abstract class EntityManager <E extends Entity> {
+public abstract class EntityManager <E extends Entity & Removable> {
 	private ArrayList<E> entities = new ArrayList<>();
-	protected Context context;
-	private ArrayList<E> markedRemovable = new ArrayList<>();
+	protected GamePanel context;
 	
-	public EntityManager (Context c) {
+	public EntityManager (GamePanel c) {
 		context = c;
 	}
 	
@@ -23,22 +23,16 @@ public abstract class EntityManager <E extends Entity> {
 		entities.add(e);
 	}
 	
-	public synchronized void removeEntity (E e) {
-		markedRemovable.add(e);
-	}
-	
 	public synchronized void update () {
-//		entities.forEach(E::update);
-		for (E e : entities) {
-			e.update();
+		Iterator<E> iter = entities.iterator();
+		while (iter.hasNext()) {
+			E ent = iter.next();
+			ent.update();
+			boolean remove = ent.remove();
+			if (remove) {
+				iter.remove();
+			}
 		}
-		
-		for (E ent : markedRemovable) {
-			entities.remove(ent);
-		}
-		markedRemovable.clear();
-		
-		removeInvisibles();
 	}
 	
 	public void draw (Graphics g) {
@@ -72,24 +66,6 @@ public abstract class EntityManager <E extends Entity> {
 			}
 		}
 		return Optional.empty();
-	}
-
-	public boolean removeInvisibles() {
-		Rectangle rect = new Rectangle(GamePanel.rect);
-		final int BORDER_SIZE = 10;
-		rect.x -= BORDER_SIZE;
-		rect.y -= BORDER_SIZE;
-		rect.width += BORDER_SIZE*2;
-		rect.height += BORDER_SIZE*2;
-		boolean out = false;
-		for (int i=0; i<entities.size(); i++) {
-			E e = entities.get(i);
-			if (!rect.intersects(e.getRect())) {
-				removeEntity(e);
-				out = true;
-			}
-		}
-		return out;
 	}
 
 }

@@ -5,7 +5,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import main.Context;
+import entity.manager.Removable;
 import main.GamePanel;
 
 public abstract class Entity {
@@ -15,17 +15,17 @@ public abstract class Entity {
 	
 	protected Image image;
 	
-	protected Context context;
+	protected GamePanel context;
 
-	public Entity (Context c) {
+	public Entity (GamePanel c) {
 		context = c;
 	}
 	
 	public final void randomLocation () {
 		final int X_MIN = width*3;
-		final int X_MAX = GamePanel.SCREEN_SIZE.width-width*3;
+		final int X_MAX = context.getPreferredSize().width-width*3;
 		final int Y_MIN = height*3;
-		final int Y_MAX = GamePanel.SCREEN_SIZE.height-height*3;
+		final int Y_MAX = context.getPreferredSize().height-height*3;
 		
 		x = (int)(Math.random()*X_MAX-X_MIN)+X_MIN;
 		y = (int)(Math.random()*Y_MAX-Y_MIN)+Y_MIN;

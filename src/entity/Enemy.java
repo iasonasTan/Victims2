@@ -7,13 +7,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import entity.manager.ProjectileManager;
-import main.Context;
+import main.GamePanel;
 
 public class Enemy extends MovableEntity {
 	private ProjectileManager projectileM;
 	private int counter = 0;
 
-	public Enemy(Context c) {
+	public Enemy(GamePanel c) {
 		super(c, 2);
 		projectileM = new ProjectileManager(context, this);
 		setDefaultValues();

@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 
-import main.Context;
 import main.DataStorage;
+import main.GamePanel;
 import main.KeyHandler;
 
 public final class Player extends MovableEntity {
@@ -25,9 +25,9 @@ public final class Player extends MovableEntity {
 	private final int BEST_SCORE;
 	private Image imageWin;
 	private Image[] collectingFrames;
-	private Victim collider;
+	private AbstractVictim collider;
 
-	public Player(Context c) {
+	public Player(GamePanel c) {
 		super(c, 8);
 		
 		BEST_SCORE = DataStorage.ScoreStorage.loadScoreFromDisk();
@@ -73,12 +73,12 @@ public final class Player extends MovableEntity {
 			keyH.shift = false;
 		}
 		
-		Optional<Victim> collider_opt = context.getVictimManager().getCollider(this);
+		Optional<AbstractVictim> collider_opt = context.getVictimManager().getCollider(this);
 		if (collider_opt.isPresent()) {
 			collider = collider_opt.get();
 			winCounter = 20;
 			if (context.getKeyHandler().space && collider != null) {
-				((Victim)collider).burn();
+				collider.kill();
 			}
 		}
 		
@@ -97,7 +97,7 @@ public final class Player extends MovableEntity {
 		super.draw(g);
 		
 		Image imageToDraw = image;
-		if (collider!=null && !collider.isBurnable()) {
+		if (collider!=null && collider instanceof FakeVictim) {
 			imageToDraw = imageWin;
 		}
 		g.drawImage(imageToDraw, x, y, width, height, null);
@@ -126,11 +126,11 @@ public final class Player extends MovableEntity {
 			return;
 		
 		super.dash(time);
-		context.getSoundManager().playFile("/sound/dash_start.wav", false);
+		context.getSoundManager().playFile("/sound/dash_start.wav");
 		var ses = Executors.newSingleThreadScheduledExecutor();
 		ses.schedule(() -> {
 			if (isOnDash())
-				context.getSoundManager().playFile("/sound/dash_stop.wav", false);
+				context.getSoundManager().playFile("/sound/dash_stop.wav");
 		}, time*1000 - 10, TimeUnit.MILLISECONDS);
 		ses.shutdown();
 		dashCount--;

@@ -2,12 +2,12 @@ package entity.manager;
 
 import entity.Entity;
 import entity.Projectile;
-import main.Context;
+import main.GamePanel;
 
 public class ProjectileManager extends EntityManager<Projectile> /* implements MouseListener */ {
 	private Entity parent;
 
-	public ProjectileManager(Context c, Entity parent) {
+	public ProjectileManager(GamePanel c, Entity parent) {
 		super(c);
 		this.parent = parent;
 	}

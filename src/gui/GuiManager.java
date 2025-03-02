@@ -39,39 +39,25 @@ public class GuiManager {
 		sp = new SettingsPanel(panel);
 	}
 	
-	public void initGui () {
-		panel.setLayout(new FlowLayout());
+	public static BufferedImage rotateImage (BufferedImage originalImage, int angle) {
+		double radians = Math.toRadians(angle);
+		int width = originalImage.getWidth();
+		int height = originalImage.getHeight();
 		
-		sp.setVisible(false);
+		BufferedImage rotatedImage = new BufferedImage(width, height, originalImage.getType());
+		Graphics2D g2d = rotatedImage.createGraphics();
+		AffineTransform transform = AffineTransform.getRotateInstance(radians, width/2, height/2);
+		g2d.setTransform(transform);
+		g2d.drawImage(originalImage, 0, 0, null);
+		g2d.dispose();
 		
-		panel.add(scoreView);
-		panel.add(forgivesView);
-		panel.add(dashCountView);
-
-		panel.add(restartBtn);
-		panel.add(ESCBtn);
-		panel.add(exitBtn);
-		panel.add(settingsBtn);
-		panel.add(sp);
-		panel.add(howToPlayBtn);
+		return rotatedImage;
 	}
 	
 	private class SettingsPanel extends JPanel {
 		private final JCheckBox newGraphicsCheck = new JCheckBox("new graphics");
 		private final JCheckBox musicCheck = new JCheckBox("Music");
-		private final Button saveAndExitBtn = new Button("Save and Exit", true, new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						Properties p = new Properties();
-						p.put("newGraphics", ""+newGraphicsCheck.isSelected());
-						p.put("music", ""+musicCheck.isSelected());
-						
-						DataStorage.SettingsStorage.writePropertiesToDisk(p);
-						pwp.updateProperties(p);
-						
-						setVisible(false);
-					}
-				});
+		private final Button saveAndExitBtn = new Button("Save and Exit", true, null);
 		
 		private PanelWithProperties pwp;
 		
@@ -86,6 +72,20 @@ public class GuiManager {
 			setBackground(new Color(0,0,0,60));
 			setPreferredSize(new Dimension(300,400));
 			setLayout(new VerticalFlowLayout(5));
+			
+			saveAndExitBtn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Properties p = new Properties();
+					p.put("newGraphics", ""+newGraphicsCheck.isSelected());
+					p.put("music", ""+musicCheck.isSelected());
+					
+					DataStorage.SettingsStorage.writePropertiesToDisk(p);
+					pwp.updateProperties(p);
+					
+					setVisible(false);
+				}
+			});
 			
 			add(newGraphicsCheck);
 			add(musicCheck);
@@ -182,19 +182,21 @@ public class GuiManager {
 		ESCBtn.doClick();
 	}
 	
-	public static BufferedImage rotateImage (BufferedImage originalImage, int angle) {
-		double radians = Math.toRadians(angle);
-		int width = originalImage.getWidth();
-		int height = originalImage.getHeight();
+	public void initGui () {
+		panel.setLayout(new FlowLayout());
 		
-		BufferedImage rotatedImage = new BufferedImage(width, height, originalImage.getType());
-		Graphics2D g2d = rotatedImage.createGraphics();
-		AffineTransform transform = AffineTransform.getRotateInstance(radians, width/2, height/2);
-		g2d.setTransform(transform);
-		g2d.drawImage(originalImage, 0, 0, null);
-		g2d.dispose();
+		sp.setVisible(false);
 		
-		return rotatedImage;
+		panel.add(scoreView);
+		panel.add(forgivesView);
+		panel.add(dashCountView);
+
+		panel.add(restartBtn);
+		panel.add(ESCBtn);
+		panel.add(exitBtn);
+		panel.add(settingsBtn);
+		panel.add(sp);
+		panel.add(howToPlayBtn);
 	}
 
 }

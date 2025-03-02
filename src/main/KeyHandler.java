@@ -2,6 +2,7 @@ package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.lang.reflect.Field;
 
 public class KeyHandler implements KeyListener {
 	public boolean left, up, right, down;
@@ -10,6 +11,17 @@ public class KeyHandler implements KeyListener {
 	
 	public void setOnEscape (Runnable r) {
 		onEscape = r;
+	}
+	
+	public void resetAll () {
+		Field[] fields = this.getClass().getFields();
+		for (Field f: fields) {
+			try {
+				f.setBoolean(this, false);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override public void keyTyped(KeyEvent e) {}

@@ -11,8 +11,8 @@ public final class SoundManager {
 		music = new ClipHandler(file, true);
 	}
 	
-	public void playFile (String path, boolean loop) {
-		new ClipHandler(path, loop);
+	public void playFile (String path) {
+		new ClipHandler(path, false);
 	}
 	
 	public static class ClipHandler {

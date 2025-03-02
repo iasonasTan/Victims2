@@ -15,21 +15,21 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import entity.Enemy;
+import entity.Entity;
 import entity.Player;
 import entity.manager.EnergyManager;
 import entity.manager.VictimManager;
 import gui.GuiManager;
 import gui.TextView;
 
-public final class GamePanel extends JPanel implements Context, PanelWithProperties {
-	private static final long serialVersionUID = 1L;
+public final class GamePanel extends JPanel implements PanelWithProperties {
 	
 	// configuration-rules
 	private boolean newGraphics = false;
 	private final int DEFAULT_GAME_OVER_COUNTER = 4;
 	private boolean musicOn;
-	public static Dimension SCREEN_SIZE;
-	public static Rectangle rect;
+	private Dimension SCREEN_SIZE;
+	private Rectangle rect;
 	private Properties properties;
 	
 	// status
@@ -53,7 +53,7 @@ public final class GamePanel extends JPanel implements Context, PanelWithPropert
 	public GamePanel () {
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		SCREEN_SIZE = tk.getScreenSize();
-		this.setPreferredSize(SCREEN_SIZE);
+		setPreferredSize(SCREEN_SIZE);
 		rect = new Rectangle(SCREEN_SIZE);
 		
 		loadSavedProperties();
@@ -69,14 +69,11 @@ public final class GamePanel extends JPanel implements Context, PanelWithPropert
 		guiM.clickESC();
 	}
 	
-	@Override
-	public GuiManager getGuiManager () {
-		return guiM;
-	}
-	
-	@Override
-	public SoundManager getSoundManager () {
-		return soundM;
+	public void setVisible(boolean visible, Class<?> clazz) {
+		for (Component c: getComponents()) {
+			if (clazz.isAssignableFrom(c.getClass()))
+				c.setVisible(visible);
+		}
 	}
 	
 	public void loadSavedProperties() {
@@ -107,14 +104,24 @@ public final class GamePanel extends JPanel implements Context, PanelWithPropert
 		enemy = new Enemy(this);
 	}
 	
-	public boolean isPaused () {
-		return paused;
-	}
-	
 	public void restartGame () {
 		stopGameThread();
 		initGameEntities();
 		startGame();		
+	}
+	
+	public boolean isInFrame (Entity e) { // use delay
+		Rectangle entityRect = new Rectangle(e.getRect());
+		final int GAP = 10;
+		entityRect.x -= GAP;
+		entityRect.y -= GAP;
+		entityRect.width+=GAP*2;
+		entityRect.height+=GAP*2;
+		if (!rect.intersects(entityRect)) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public void startGame () {
@@ -159,9 +166,43 @@ public final class GamePanel extends JPanel implements Context, PanelWithPropert
 		
 		if (!rect.intersects(player.getRect())) {
 			gameOver("normal");
-			soundM.playFile("/sound/gameOver.wav", false);
+			soundM.playFile("/sound/gameOver.wav");
 			player.decreaseScore();
 			player.setDefaultValues();
+		}
+	}
+	
+	public void gameOver (String mode) {
+		if (mode.equals("normal")) {
+			gameOverCounter--;
+			
+			if (gameOverCounter <= 0) {
+				gameOver("force");
+			}
+		} else if (mode.equals("force")) {
+			guiM.gameOver();
+			gameOver=true;
+			soundM.playFile("/sound/gameOver.wav");
+			player.saveScore();
+		} else {
+			throw new IllegalArgumentException("Parameter "+mode+" is not valid");
+		}
+	}
+
+	@Override
+	public void updateProperties(Properties p) {
+		this.properties = p;
+		loadSavedProperties();
+		
+		victimM.reloadResources();
+		player.reloadResources();
+		energyM.reloadResources();
+		enemy.reloadResources();
+		
+		if (!musicOn) {
+			soundM.stopMusic();
+		} else {
+			soundM.resumeMusic();
 		}
 	}
 	
@@ -206,6 +247,7 @@ public final class GamePanel extends JPanel implements Context, PanelWithPropert
 	
 	public void resume () {
 		paused = false;
+		keyH.resetAll();
 		startGame();
 		super.requestFocus();
 	}
@@ -214,89 +256,58 @@ public final class GamePanel extends JPanel implements Context, PanelWithPropert
 		gameThread = null;
 		player.saveScore();
 	}
-	@Override
-	public void gameOver (String mode) {
-		if (mode.equals("normal")) {
-			gameOverCounter--;
-			
-			if (gameOverCounter <= 0) {
-				gameOver("force");
-			}
-		} else if (mode.equals("force")) {
-			guiM.gameOver();
-			gameOver=true;
-			soundM.playFile("/sound/gameOver.wav", false);
-			player.saveScore();
-		} else {
-			throw new IllegalArgumentException("Parameter "+mode+" is not valid");
-		}
-	}
-
-	@Override
+	
 	public Player getPlayer() {
-
 		return player;
 	}
 	
-	@Override
 	public KeyHandler getKeyHandler() {
 		return keyH;
 	}
 	
-	@Override
 	public VictimManager getVictimManager() {
 		return victimM;
 	}
 	
-	@Override
 	public Enemy getEnemy () {
 		return enemy;
 	}
 	
-	@Override
 	public GamePanel getPanel () {
 		return this;
 	}
 
-	@Override
-	public void updateProperties(Properties p) {
-		this.properties = p;
-		loadSavedProperties();
-		
-		victimM.reloadResources();
-		player.reloadResources();
-		energyM.reloadResources();
-		enemy.reloadResources();
-		
-		if (!musicOn) {
-			soundM.stopMusic();
-		} else {
-			soundM.resumeMusic();
-		}
-	}
-
-	@Override
 	public boolean isNewGraphics() {
 		return newGraphics;
 	}
 
-	@Override
 	public EnergyManager getEnergyManager() {
 		return energyM;
 	}
 
-	@Override
 	public boolean isMusicOn() {
 		return musicOn;
 	}
-
-	public void setVisible(boolean visible, Class<?> clazz) {
-		for (Component c: getComponents()) {
-			if (clazz.isAssignableFrom(c.getClass())) {
-				c.setVisible(visible);
-			}
-		}
-		
+	
+	public Rectangle getRect() {
+		return rect;
+	}
+	
+	@Override
+	public Dimension getPreferredSize () {
+		return SCREEN_SIZE;
+	}
+	
+	public GuiManager getGuiManager() {
+		return guiM;
+	}
+	
+	public SoundManager getSoundManager() {
+		return soundM;
+	}
+	
+	public boolean isPaused () {
+		return paused;
 	}
 
 }
