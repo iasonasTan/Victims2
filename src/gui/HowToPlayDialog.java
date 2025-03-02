@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
@@ -25,7 +24,7 @@ public class HowToPlayDialog extends JPanel {
 	
 	private void initGui () {
 		setPreferredSize(new Dimension(400,300));
-		setLayout(new VerticalFlowLayout(this));
+		setLayout(new VerticalFlowLayout());
 		
 		add(text);
 		add(closeBtn);

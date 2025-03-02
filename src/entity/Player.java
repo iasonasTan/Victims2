@@ -134,6 +134,8 @@ public final class Player extends MovableEntity {
 		}, time*1000 - 10, TimeUnit.MILLISECONDS);
 		ses.shutdown();
 		dashCount--;
+		
+		context.getGuiManager().displayDashCount(dashCount);
 	}
 	
 	@Override

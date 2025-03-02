@@ -11,7 +11,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.Properties;
 
-import javax.swing.AbstractButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
@@ -40,21 +39,6 @@ public class GuiManager {
 		sp = new SettingsPanel(panel);
 	}
 	
-	public static BufferedImage rotateImage (BufferedImage originalImage, int angle) {
-		double radians = Math.toRadians(angle);
-		int width = originalImage.getWidth();
-		int height = originalImage.getHeight();
-		
-		BufferedImage rotatedImage = new BufferedImage(width, height, originalImage.getType());
-		Graphics2D g2d = rotatedImage.createGraphics();
-		AffineTransform transform = AffineTransform.getRotateInstance(radians, width/2, height/2);
-		g2d.setTransform(transform);
-		g2d.drawImage(originalImage, 0, 0, null);
-		g2d.dispose();
-		
-		return rotatedImage;
-	}
-	
 	public void initGui () {
 		panel.setLayout(new FlowLayout());
 		
@@ -72,60 +56,47 @@ public class GuiManager {
 		panel.add(howToPlayBtn);
 	}
 	
-	public void setSettingsVisible (boolean v) {
-		sp.setVisible(v);
-		for (Component c : panel.getComponents()) {
-			if (c instanceof Button || c instanceof TextView) {
-				c.setVisible(!v);
-			}
-		}
-	}
-	
 	private class SettingsPanel extends JPanel {
 		private final JCheckBox newGraphicsCheck = new JCheckBox("new graphics");
 		private final JCheckBox musicCheck = new JCheckBox("Music");
-		private final Button saveAndExitBtn = new Button("Save and Exit", true, new SaveAndExitListener());
+		private final Button saveAndExitBtn = new Button("Save and Exit", true, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						Properties p = new Properties();
+						p.put("newGraphics", ""+newGraphicsCheck.isSelected());
+						p.put("music", ""+musicCheck.isSelected());
+						
+						DataStorage.SettingsStorage.writePropertiesToDisk(p);
+						pwp.updateProperties(p);
+						
+						setVisible(false);
+					}
+				});
 		
 		private PanelWithProperties pwp;
 		
 		public SettingsPanel (PanelWithProperties pwp) {
 			this.pwp = pwp;
 			
-			setLSD();
-			addComponents();
+			initUI();
 			loadSavedSettings();
 		}
 		
-		private void loadSavedSettings () {
-			Properties savedProperties = DataStorage.SettingsStorage.loadPropertiesFromDisk();
-			newGraphicsCheck.setSelected(savedProperties.get("newGraphics").equals("true"));
-			musicCheck.setSelected(savedProperties.get("music").equals("true"));
-		}
-		
-		private class SaveAndExitListener implements ActionListener {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Properties p = new Properties();
-				p.put("newGraphics", ""+newGraphicsCheck.isSelected());
-				p.put("music", ""+musicCheck.isSelected());
-				
-				DataStorage.SettingsStorage.writePropertiesToDisk(p);
-				pwp.updateProperties(p);
-				
-				setSettingsVisible(false);
-			}
-		}
-		
-		private void addComponents () {
+		private void initUI () {
+			setBackground(new Color(0,0,0,60));
+			setPreferredSize(new Dimension(300,400));
+			setLayout(new VerticalFlowLayout(5));
+			
 			add(newGraphicsCheck);
 			add(musicCheck);
 			
 			add(saveAndExitBtn);
 		}
 		
-		private void setLSD () {
-			setBackground(new Color(0,0,0,60));
-			setPreferredSize(new Dimension(200,200));
+		private void loadSavedSettings () {
+			Properties savedProperties = DataStorage.SettingsStorage.loadPropertiesFromDisk();
+			newGraphicsCheck.setSelected(savedProperties.get("newGraphics").equals("true"));
+			musicCheck.setSelected(savedProperties.get("music").equals("true"));
 		}
 		
 		@Override
@@ -135,6 +106,9 @@ public class GuiManager {
 			for (Component c: components) {
 				c.setVisible(visible);
 			}
+			
+			panel.setVisible(!visible, Button.class);
+			panel.setVisible(!visible, TextView.class);
 		}
 		
 	};
@@ -151,26 +125,13 @@ public class GuiManager {
 			} else if (bSource.equals(restartBtn)) {
 				restartGame();
 			} else if (bSource.equals(settingsBtn)) {
-				setSettingsVisible(true);
+				sp.setVisible(true);
 			} else if (bSource.equals(howToPlayBtn)) {
 				HowToPlayDialog.show(panel);
 			}
 			else {
 				throw new RuntimeException("unhandled event "+bSource.getText());
 			}
-		}
-		
-		public void restartGame () {
-			panel.restartGame();
-			
-			restartBtn.setVisible(false);
-			exitBtn.setVisible(false);
-			settingsBtn.setVisible(false);
-			howToPlayBtn.setVisible(false);
-			
-			ESCBtn.setVisible(true);
-			ESCBtn.setText("Pause Game");
-			dashCountView.setText("dash(shift): 0");
 		}
 		
 		public void showHideMenu () {
@@ -183,14 +144,27 @@ public class GuiManager {
 				ESCBtn.setText("Pause Game");
 				panel.resume();
 			}
-			exitBtn.setVisible(buttonsVisible);
-			restartBtn.setVisible(buttonsVisible);
-			settingsBtn.setVisible(buttonsVisible);
-			howToPlayBtn.setVisible(buttonsVisible);
+			panel.setVisible(buttonsVisible, Button.class);
+			ESCBtn.setVisible(true);
 			panel.repaint();
 		}
 		
 	};
+	
+	public void restartGame () {
+		panel.restartGame();
+		panel.setVisible(false, Button.class);
+		
+		ESCBtn.setVisible(true);
+		ESCBtn.setText("Pause Game");
+		dashCountView.setText("dash(shift): 0");
+	}
+
+	public void gameOver() {
+		panel.setVisible(false, Button.class);
+		restartBtn.setVisible(true);
+		exitBtn.setVisible(true);
+	}
 	
 	public void displayForgivable (int val) {
 		forgivesView.setText("forgivable: "+val);
@@ -199,20 +173,28 @@ public class GuiManager {
 	public void displayScore (String score) {
 		scoreView.setText("score: "+score);
 	}
+
+	public void displayDashCount(int dashCount) {
+		dashCountView.setText("dash (shift): "+dashCount);	
+	}
 	
 	public void clickESC () {
 		ESCBtn.doClick();
 	}
-
-	public void gameOver() {
-		restartBtn.setVisible(true);
-		exitBtn.setVisible(true);
-		ESCBtn.setVisible(false);
-	}
-
-	public void displayDashCount(int dashCount) {
-		dashCountView.setText("dash (shift): "+dashCount);
+	
+	public static BufferedImage rotateImage (BufferedImage originalImage, int angle) {
+		double radians = Math.toRadians(angle);
+		int width = originalImage.getWidth();
+		int height = originalImage.getHeight();
 		
+		BufferedImage rotatedImage = new BufferedImage(width, height, originalImage.getType());
+		Graphics2D g2d = rotatedImage.createGraphics();
+		AffineTransform transform = AffineTransform.getRotateInstance(radians, width/2, height/2);
+		g2d.setTransform(transform);
+		g2d.drawImage(originalImage, 0, 0, null);
+		g2d.dispose();
+		
+		return rotatedImage;
 	}
 
 }

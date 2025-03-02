@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import entity.Enemy;
@@ -17,6 +19,7 @@ import entity.Player;
 import entity.manager.EnergyManager;
 import entity.manager.VictimManager;
 import gui.GuiManager;
+import gui.TextView;
 
 public final class GamePanel extends JPanel implements Context, PanelWithProperties {
 	private static final long serialVersionUID = 1L;
@@ -285,6 +288,15 @@ public final class GamePanel extends JPanel implements Context, PanelWithPropert
 	@Override
 	public boolean isMusicOn() {
 		return musicOn;
+	}
+
+	public void setVisible(boolean visible, Class<?> clazz) {
+		for (Component c: getComponents()) {
+			if (clazz.isAssignableFrom(c.getClass())) {
+				c.setVisible(visible);
+			}
+		}
+		
 	}
 
 }
