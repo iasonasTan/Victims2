@@ -2,3 +2,8 @@
 2. Collect all blue entities.
 3. Avoid purple entities.
 4. Collect energy and use it whenever you need (press shift).
+
+Move: w,a,s,d.
+Collect entity with space.
+Use energy with shift.
+Press ESC to pause.
