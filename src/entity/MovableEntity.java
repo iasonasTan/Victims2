@@ -52,6 +52,7 @@ public abstract class MovableEntity extends Entity implements Collector {
 		dashImage = new BufferedImage(defaultDashImage.getWidth(null),
 				defaultDashImage.getHeight(null),
 				BufferedImage.TYPE_INT_ARGB);
+
 		Graphics imageG = dashImage.getGraphics();
 		imageG.drawImage(defaultDashImage, 0, 0, null);
 		imageG.dispose();
