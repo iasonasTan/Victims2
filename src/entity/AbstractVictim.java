@@ -2,7 +2,6 @@ package entity;
 
 import java.awt.Rectangle;
 
-import entity.manager.Removable;
 import main.GamePanel;
 
 public abstract class AbstractVictim extends MovableEntity implements Removable {

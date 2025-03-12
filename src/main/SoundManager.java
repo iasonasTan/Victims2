@@ -18,7 +18,7 @@ public final class SoundManager {
 	}
 	
 	public void playFile (String path) {
-		new ClipHandler(path, false);
+		new ClipHandler(path, false).start();
 	}
 	
 	public static class ClipHandler {
@@ -32,16 +32,17 @@ public final class SoundManager {
 				clip.open(ais);
 				if (loop)
 					clip.loop(Clip.LOOP_CONTINUOUSLY);
-				clip.start();
-				
-				clip.addLineListener(event -> {
-	                if (event.getType() == LineEvent.Type.STOP) {
-	                    close();
-	                }
-	            });
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		public void start () {
+			clip.start();
+			clip.addLineListener(event -> {
+				if (event.getType() == LineEvent.Type.STOP) {
+					close();
+				}
+			});
 		}
 		public void close () {
 			clip.close();

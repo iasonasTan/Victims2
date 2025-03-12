@@ -4,7 +4,6 @@ import java.awt.Point;
 
 import javax.swing.ImageIcon;
 
-import entity.manager.Removable;
 import main.GamePanel;
 
 public class Projectile extends MovableEntity implements Removable {

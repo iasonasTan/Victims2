@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import entity.*;
-import entity.manager.EntityManager;
+import entity.EntityManager;
 import gui.GuiManager;
 
 public final class GamePanel extends JPanel implements PanelWithProperties {
@@ -57,10 +57,7 @@ public final class GamePanel extends JPanel implements PanelWithProperties {
 		addKeyListener(keyH);
 		setFocusable(true);
 		requestFocus();
-		
-		soundM.setMusic("/sound/music.wav");
-		if (!musicOn)
-			soundM.stopMusic();
+
 		guiM.clickESC();
 	}
 	
@@ -84,8 +81,9 @@ public final class GamePanel extends JPanel implements PanelWithProperties {
 			e.printStackTrace();
 		}
 		keyH = new KeyHandler();
-		initGameEntities();
 		soundM = new SoundManager();
+		soundM.setMusic("/sound/music2.wav");
+		initGameEntities();
 		guiM = new GuiManager(this);
 		guiM.initGui();
 		keyH.setOnEscape(guiM::clickESC);
@@ -134,6 +132,8 @@ public final class GamePanel extends JPanel implements PanelWithProperties {
 				}
 			}
 		};
+		if (!musicOn)
+			soundM.stopMusic();
 	}
 	
 	public void restartGame () {

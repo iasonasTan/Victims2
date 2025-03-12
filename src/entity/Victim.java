@@ -15,7 +15,7 @@ public class Victim extends AbstractVictim {
 	
 	@Override
 	public void burn() {
-		context.getPlayer().decreaseScore();
+		context.gameOver("normal");
 		context.getSoundManager().playFile("/sound/score_decreased.wav");
 		killed = true;
 	}

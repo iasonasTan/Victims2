@@ -114,8 +114,9 @@ public abstract class DataStorage { // final
 
 		public static Properties getDefaultProperties() {
 			Properties defaultP = new Properties();
-			defaultP.put("newGraphics", "false");
-			defaultP.put("music", "true");
+			defaultP.setProperty("newGraphics", "false");
+			defaultP.setProperty("music", "true");
+			defaultP.setProperty("movementMethod", "key-based");
 
 			return defaultP;
 		}

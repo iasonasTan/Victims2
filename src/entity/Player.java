@@ -31,6 +31,7 @@ public final class Player extends MovableEntity {
 	public Player(GamePanel c, String mm) {
 		super(c, 8);
 		this.movementMethod = mm;
+		setSprite(false);
 		
 		BEST_SCORE = DataStorage.ScoreStorage.loadScoreFromDisk();
 		
@@ -75,8 +76,8 @@ public final class Player extends MovableEntity {
 			stepsX += keyH.left ? -speed : keyH.right ? speed : 0;
 			stepsY += keyH.up ? -speed : keyH.down ? speed : 0;
 		} else if (movementMethod.equals("mouse-based")) {
-			Point mousePossition = context.getMousePosition();
-			PointDb dire = MovableEntity.getDirection(getPoint(), mousePossition);
+			Point mousePosition = context.getMousePosition();
+			PointDb dire = MovableEntity.getDirection(getPoint(), mousePosition);
 			stepsX = -(int)(speed*dire.x());
 			stepsY = -(int)(speed*dire.y());
 		} else {
@@ -84,14 +85,12 @@ public final class Player extends MovableEntity {
 		}
 		
 		move(new Point(stepsX, stepsY));
-		
 		updateRect();
-		
 		if (keyH.shift) {
 			dash(2, 3);
 			keyH.shift = false;
 		}
-		
+
 		Optional<AbstractVictim> collider_opt = context.getVictimManager().getCollider(this);
 		if (collider_opt.isPresent()) {
 			collider = collider_opt.get();
@@ -113,7 +112,7 @@ public final class Player extends MovableEntity {
 
 	@Override
 	public void draw(Graphics g) {
-		super.draw(g);
+		super. draw(g);
 		
 		Image imageToDraw = image;
 		if (collider!=null && collider instanceof FakeVictim) {
@@ -185,6 +184,10 @@ public final class Player extends MovableEntity {
 	public void setDefaultValues() {
 		width = 100;
 		height = width;
+		movementMethod=DataStorage
+				.SettingsStorage
+				.getDefaultProperties()
+				.getProperty("movementMethod");
 		
 		x = 200;
 		y = 200;

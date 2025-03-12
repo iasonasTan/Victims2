@@ -5,7 +5,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import entity.manager.Removable;
 import main.GamePanel;
 
 public abstract class Entity {

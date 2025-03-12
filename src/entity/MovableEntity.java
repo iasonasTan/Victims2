@@ -17,6 +17,8 @@ public abstract class MovableEntity extends Entity implements Collector {
 	protected Direction direction = Direction.DOWN;
 	protected BufferedImage dashImage;
 	protected Image defaultDashImage;
+	protected int spriteCounter =0;
+	protected boolean spritesOn=true;
 
 	public MovableEntity(GamePanel c, int defaultSpeed) {
 		super(c);
@@ -61,9 +63,27 @@ public abstract class MovableEntity extends Entity implements Collector {
 	public void draw(Graphics g) {
 		if (onDash) {
 			final int DIFF = 40;
-			g.drawImage(dashImage, x-DIFF, y-DIFF, width+DIFF*2, height+DIFF*2, null);
+			g.drawImage(dashImage, x - DIFF, y - DIFF,
+					width + DIFF * 2, height + DIFF * 2, null);
 		}
-		g.drawImage(image, x, y, width, height, null);
+		if (spriteCounter >20 && spritesOn) {
+			final int STEP_SIZE = 10;
+			switch (direction) {
+				case UP -> g.drawImage(image, x, y - STEP_SIZE, width, height, null);
+				case DOWN -> g.drawImage(image, x, y + STEP_SIZE, width, height, null);
+				case LEFT -> g.drawImage(image, x - STEP_SIZE, y, width, height, null);
+				case RIGHT -> g.drawImage(image, x + STEP_SIZE, y, width, height, null);
+			}
+			if (spriteCounter ==40) {
+				spriteCounter = 0;
+			}
+		} else {
+			g.drawImage(image, x, y, width, height, null);
+		}
+	}
+
+	public void setSprite(boolean s) {
+		this.spritesOn=s;
 	}
 	
 	public void move (Point steps) {
@@ -78,6 +98,7 @@ public abstract class MovableEntity extends Entity implements Collector {
 
 	@Override
 	public void update() {
+		spriteCounter++;
 		resetDashImage();
 		
 		int degrees = 0;
@@ -122,30 +143,33 @@ public abstract class MovableEntity extends Entity implements Collector {
 		RIGHT;
 		
 		public static Direction opposite (Direction d) {
-			switch (d) {
-				case UP: return DOWN;
-				case DOWN: return UP;
-				case LEFT: return RIGHT;
-				default: return LEFT;
-			}
+            return switch (d) {
+                case UP -> DOWN;
+                case DOWN -> UP;
+                case LEFT -> RIGHT;
+                default -> LEFT;
+            };
 		}
 		
 		public static Direction random () {
 			final int LEN = 4;
 			int randInt = (int)(Math.random()*LEN);
-			
-			switch (randInt) {
-				case 0: return UP;
-				case 1: return DOWN;
-				case 2: return RIGHT;
-				case 3: return LEFT;
-				default: return DOWN;
-			}
+
+            return switch (randInt) {
+                case 0 -> UP;
+                case 1 -> RIGHT;
+                case 2 -> LEFT;
+                default -> DOWN;
+            };
 		}
 	}
 	
 	public boolean isOnDash () {
 		return onDash;
+	}
+
+	public record PointDb (double x, double y) {
+
 	}
 
 }

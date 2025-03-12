@@ -4,7 +4,6 @@ import java.awt.Graphics;
 
 import javax.swing.ImageIcon;
 
-import entity.manager.Removable;
 import main.GamePanel;
 
 public final class Energy extends Entity implements Removable {

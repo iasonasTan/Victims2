@@ -33,7 +33,7 @@ public class GuiManager {
 	
 	private final TextView scoreView = new TextView();
 	private final TextView forgivesView = new TextView();
-	private final TextView dashCountView = new TextView("dash(shift): 0");
+	private final TextView dashCountView = new TextView();
 	
 	public GuiManager (GamePanel p) {
 		panel = p;
@@ -173,7 +173,7 @@ public class GuiManager {
 	}
 	
 	public void displayForgivable (int val) {
-		forgivesView.setText("forgivable: "+val);
+		forgivesView.setText("changes: "+val);
 	}
 	
 	public void displayScore (String score) {
@@ -181,7 +181,7 @@ public class GuiManager {
 	}
 
 	public void displayDashCount(int dashCount) {
-		dashCountView.setText("dash (shift): "+dashCount);	
+		dashCountView.setText("dash: "+dashCount);
 	}
 	
 	public void clickESC () {
@@ -189,6 +189,7 @@ public class GuiManager {
 	}
 	
 	public void initGui () {
+		displayDashCount(0);
 		panel.setLayout(new FlowLayout());
 		
 		sp.setVisible(false);

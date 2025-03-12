@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import entity.manager.EntityManager;
 import main.GamePanel;
 
 public class Enemy extends MovableEntity {
