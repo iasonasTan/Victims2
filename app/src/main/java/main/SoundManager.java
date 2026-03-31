@@ -13,11 +13,11 @@ import javax.sound.sampled.LineEvent;
 public final class SoundManager {
 	private ClipHandler music;
 	
-	public void setMusic (String file) {
+	public void setMusic(String file) {
 		music = new ClipHandler(file, true);
 	}
 	
-	public void playFile (String path) {
+	public void playFile(String path) {
 		new ClipHandler(path, false).start();
 	}
 	

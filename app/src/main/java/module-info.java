@@ -1,9 +1,6 @@
 /**
- * 
+ * Victims2 (two) game.
  */
-/**
- * 
- */
-module Victims2 {
+module VictimsTwo {
 	requires java.desktop;
 }

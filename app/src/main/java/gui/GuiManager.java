@@ -20,6 +20,9 @@ import main.GamePanel;
 import main.PanelWithProperties;
 
 public class GuiManager {
+	public static final Color COMPONENT_BACKGROUND = new Color(69, 101, 156);
+	public static final Color COMPONENT_FOREGROUND = new Color(225, 194, 139);
+
 	private GamePanel panel;
 
 	private final ButtonEvents beh = new ButtonEvents();

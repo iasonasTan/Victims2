@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
-public abstract class DataStorage { // final
+public final class DataStorage {
 	private static String home;
 	private static File dataFolder;
 	private static final String dataFolderName = "game_data_0000";
@@ -132,4 +132,9 @@ public abstract class DataStorage { // final
 		}
 	}
 
+	/**
+	 * Private constructor prevents instantiation.
+	 */
+	private DataStorage() {
+	}
 }

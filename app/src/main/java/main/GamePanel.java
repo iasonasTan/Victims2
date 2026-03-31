@@ -18,7 +18,6 @@ import entity.EntityManager;
 import gui.GuiManager;
 
 public final class GamePanel extends JPanel implements PanelWithProperties {
-	
 	// configuration-rules
 	private boolean newGraphics = false;
 	private final int DEFAULT_GAME_OVER_COUNTER = 4;

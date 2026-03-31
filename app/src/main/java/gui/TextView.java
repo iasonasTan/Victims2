@@ -17,5 +17,7 @@ public class TextView extends JTextField {
 		setFont(new Font("Serif", Font.BOLD, 16));
 		setEditable(false);
 		setPreferredSize(new Dimension(130, 40));
+		setBackground(GuiManager.COMPONENT_BACKGROUND);
+		setForeground(GuiManager.COMPONENT_FOREGROUND);
 	}
 }
